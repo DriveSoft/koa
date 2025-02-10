@@ -3,7 +3,7 @@ import { Model, Modifiers } from 'objection'
 export default class Contact extends Model {
   id!: number
   phone!: string
-  personId!: number
+  userId!: number
 
   static get tableName() {
     return 'contacts';
@@ -12,12 +12,12 @@ export default class Contact extends Model {
   static get jsonSchema() {
     return {
       type: "object",
-      required: ["phone", "personId"],
+      required: ["phone", "userId"],
 
       properties: {
         id: { type: 'integer' },
         phone: { type: 'string', minLength: 1, maxLength: 255 },
-        personId: { type: 'integer' },
+        userId: { type: 'integer' },
       }
     }
   }

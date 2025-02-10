@@ -1,58 +1,58 @@
 import Contact from "../models/Contact.mjs";
-import Person from "../models/Person.mjs";
+import User from "../models/User.mjs";
 
 export const resolvers = {
 	Query: {
-		persons: async () => await getPersons(),
-		person: async (parent: any, args: any, context: any, info: any) => {
-			return await getPerson(args.id)
+		users: async () => await getUsers(),
+		user: async (parent: any, args: any, context: any, info: any) => {
+			return await getUser(args.id)
 		},
-		contacts: async () => await getPersons(),
+		contacts: async () => await getUsers(),
 		contact: async (parent: any, args: any, context: any, info: any) => {
-			return await getPerson(args.id)
+			return await getUser(args.id)
 		}		
 	},
 
 	Mutation: {
-		createPerson: async (_: any, args: any, context: any) => {
-			return await addPerson(args.input);
+		createUser: async (_: any, args: any, context: any) => {
+			return await addUser(args.input);
 		},
 		createContact: async (_: any, args: any, context: any) => {
 			return await addContact(args.input);
 		}		
 	},
 
-	Person: {
+	User: {
 		contacts: (parent: any) => {
-			return getPersonContact(parent.id)
+			return getUserContact(parent.id)
 		}
 	}
 
 };
 
-async function getPersons() {
-	return await Person.query().select("id", "firstName", "lastName", "dob")
+async function getUsers() {
+	return await User.query().select("id", "firstName", "lastName", "dob")
 }
 
-async function getPerson(id: number) {
-	return await Person.query().select("id", "firstName", "lastName", "dob").findById(id);
+async function getUser(id: number) {
+	return await User.query().select("id", "firstName", "lastName", "dob").findById(id);
 }
 
 async function getContacts() {
-	return await Contact.query().select("id", "phone", "personId")
+	return await Contact.query().select("id", "phone", "userId")
 }
 
 async function getContact(id: number) {
-	return await Contact.query().select("id", "phone", "personId").findById(id);
+	return await Contact.query().select("id", "phone", "userId").findById(id);
 }
 
-async function getPersonContact(personId: number) {
-	return await Contact.query().select("id", "phone", "personId").where("personId", personId);
+async function getUserContact(userId: number) {
+	return await Contact.query().select("id", "phone", "userId").where("userId", userId);
 }
 
-async function addPerson(data: any) {
-		const newPerson = await Person.query().insert(data);
-		return newPerson;
+async function addUser(data: any) {
+		const newUser = await User.query().insert(data);
+		return newUser;
 };
 
 async function addContact(data: any) {

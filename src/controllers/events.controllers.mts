@@ -1,8 +1,8 @@
 import { Context } from "koa";
-import Person from "../models/Person.mjs";
+import Person from "../models/User.mjs";
 
 export const getPersons = async (ctx: Context) => {
-   const persons = await Person.query().select("id", "firstName", "lastName", "dob");
+   const persons = await Person.query().select("id", "firstName", "lastName", "dob", "email");
    ctx.body = persons;
    ctx.status = 201;   
 };

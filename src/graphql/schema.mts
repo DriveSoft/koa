@@ -1,10 +1,11 @@
 import { gql } from "apollo-server";
 
 export const typeDefs = gql`
-   type Person {      
+   type User {      
       id: Int
       firstName: String
       lastName: String
+      email: String
       dob: String   
       contacts: [Contact!]!
    }
@@ -12,38 +13,31 @@ export const typeDefs = gql`
    type Contact {      
       id: Int
       phone: String
-      personId: Int 
+      userId: Int 
    }   
 
-   input CreatePersonInput {
+   input CreateUserInput {
       firstName: String!
       lastName: String!
-      dob: String!   
+      dob: String!  
+      email: String! 
+      password: String!
    } 
 
    input CreateContactInput {
-      personId: Int!
+      userId: Int!
       phone: String!
    }   
    
    type Query {
-      persons: [Person]
-   }
-
-   type Query {
-      person(id: ID!): Person
-   }   
-
-   type Query {
+      users: [User]
+      user(id: ID!): User
       contacts: [Contact]
-   }
-
-   type Query {
       contact(id: ID!): Contact
-   }    
+   }
 
    type Mutation {
-      createPerson(input: CreatePersonInput!): Person!
+      createUser(input: CreateUserInput!): User!
       createContact(input: CreateContactInput!): Contact!
    } 
 `;
