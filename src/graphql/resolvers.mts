@@ -1,5 +1,4 @@
-import Contact from "../models/Contact.mjs";
-import User from "../models/User.mjs";
+import { addContact, getUser, getUserContact, getUsers, login, registerUser } from "../controllers/users.controller.mjs";
 
 export const resolvers = {
 	Query: {
@@ -15,11 +14,15 @@ export const resolvers = {
 
 	Mutation: {
 		createUser: async (_: any, args: any, context: any) => {
-			return await addUser(args.input);
+			return await registerUser(args.input);
 		},
 		createContact: async (_: any, args: any, context: any) => {
 			return await addContact(args.input);
-		}		
+		},
+		login: async (_: any, args: any) => {
+			const { email, password } = args;
+			return await login(email, password);
+		}			
 	},
 
 	User: {
@@ -30,32 +33,3 @@ export const resolvers = {
 
 };
 
-async function getUsers() {
-	return await User.query().select("id", "firstName", "lastName", "dob")
-}
-
-async function getUser(id: number) {
-	return await User.query().select("id", "firstName", "lastName", "dob").findById(id);
-}
-
-async function getContacts() {
-	return await Contact.query().select("id", "phone", "userId")
-}
-
-async function getContact(id: number) {
-	return await Contact.query().select("id", "phone", "userId").findById(id);
-}
-
-async function getUserContact(userId: number) {
-	return await Contact.query().select("id", "phone", "userId").where("userId", userId);
-}
-
-async function addUser(data: any) {
-		const newUser = await User.query().insert(data);
-		return newUser;
-};
-
-async function addContact(data: any) {
-	const newContact = await Contact.query().insert(data);
-	return newContact;
-};
