@@ -72,14 +72,36 @@ export async function login(email: string, password: string) {
 
    const JWT_SECRET = process.env.JWT_SECRET as string;
 
-   const token = jwt.sign(
+   const accessToken = jwt.sign(
       { userId: user.id },
       JWT_SECRET,
       { expiresIn: '1d' }
    );
 
+   const refreshToken = jwt.sign(
+      { userId: user.id },
+      JWT_SECRET,
+      { expiresIn: '30d' }
+   );   
+
    return {
-      token,
+      accessToken,
+      refreshToken,
       user
    };
 }
+
+export const getUserByToken = async(token: string) => {
+   const JWT_SECRET = process.env.JWT_SECRET as string;
+   const decoded = jwt.verify(token, JWT_SECRET);  
+   //console.log("decoded", decoded)
+
+   if(typeof decoded === "object" && "userId" in decoded) {
+      const user = await User.query().select("id", "firstName", "lastName", "dob").findById(decoded.userId) ?? null;
+      return user;
+   }
+   
+   return null;
+}
+
+getUserByToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjksImlhdCI6MTczOTM0ODk1NSwiZXhwIjoxNzM5NDM1MzU1fQ.B6MN3A8n2SL-jK8ausuArccytPLl1MOj5qlQSwAv_JA")

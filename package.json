@@ -11,8 +11,11 @@
   "author": "DriveSoft",
   "license": "ISC",
   "dependencies": {
+    "@as-integrations/koa": "^1.1.1",
+    "@koa/cors": "^5.0.0",
     "@types/bcrypt": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.8",
+    "@types/koa__cors": "^5.0.0",
     "apollo-server": "^3.13.0",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",

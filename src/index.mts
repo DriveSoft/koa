@@ -10,6 +10,8 @@ import { ApolloServerPluginLandingPageLocalDefault } from "apollo-server-core"
 import { ApolloServer } from "apollo-server";
 import { typeDefs } from "./graphql/schema.mjs";
 import { resolvers } from "./graphql/resolvers.mjs";
+import { getUser, getUserByToken } from "./controllers/users.controller.mjs";
+import cors from "@koa/cors";
 
 // Initialize knex.
 const knex = Knex({
@@ -25,6 +27,11 @@ const knex = Knex({
 // .catch(err => console.error('Connection failed:', err)); 
 
 const app = new Koa();
+
+app.use(cors({
+  credentials: true,
+  origin: 'http://localhost:4000' // Your frontend origin
+}));
 
 app.use(parser()).use(router.routes()).use(router.allowedMethods());
 
@@ -52,7 +59,16 @@ const server = new ApolloServer({
   plugins: [
     ApolloServerPluginLandingPageLocalDefault({ embed: true }),
   ],
+
+  context: async ({ req, res }) => {
+    // Get token from Authorization header
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    if(token === undefined) return { user: null, req, res };
+    const user = await getUserByToken(token);   
+    return { user, req, res };
+  }  
 });
+
 
 // The `listen` method launches a web server.
 server.listen().then(({ url }) => {
