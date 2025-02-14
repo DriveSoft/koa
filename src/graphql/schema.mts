@@ -44,6 +44,6 @@ export const typeDefs = gql`
    type Mutation {
       createUser(input: CreateUserInput!): User!
       createContact(input: CreateContactInput!): Contact!
-      login(email: String!, password: String!): AuthPayload
+      login(email: String!, password: String!): AuthPayload!
    } 
 `;
