@@ -5,7 +5,7 @@ export default class User extends Model {
   id!: number
   firstName!: string
   lastName!: string
-  dob!: string
+  dob!: Date
   email!: string
   password!: string
 

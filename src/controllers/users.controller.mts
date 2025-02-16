@@ -26,7 +26,9 @@ export async function registerUser(data: any) {
 };
 
 export async function getUsers() {
-   return await User.query().select("id", "firstName", "lastName", "dob")
+   const users = await User.query().select("id", "firstName", "lastName", "dob");
+   console.log(users)
+   return users.map(user => ({...user, dob: new Date(user.dob).toISOString().slice(0, 10)}));
 }
 
 export async function getUser(id: number) {

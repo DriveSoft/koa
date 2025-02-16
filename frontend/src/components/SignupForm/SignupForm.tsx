@@ -10,22 +10,22 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-interface LoginFormProps extends React.ComponentPropsWithoutRef<"div"> {
-	onShowSignupForm: () => void;
+interface SignupFormProps extends React.ComponentPropsWithoutRef<"div"> {
+	onShowLoginForm: () => void;
 }
 
-export function LoginForm({
+export function SignupForm({
 	className,
-	onShowSignupForm,
+	onShowLoginForm,
 	...props
-}: LoginFormProps) {
+}: SignupFormProps) {
 	return (
 		<div className={cn("flex flex-col gap-6", className)} {...props}>
 			<Card>
 				<CardHeader>
-					<CardTitle className="text-2xl">Login</CardTitle>
+					<CardTitle className="text-2xl">Sign up</CardTitle>
 					<CardDescription>
-						Enter your email below to login to your account
+						Enter your email and password below to Signup
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
@@ -47,18 +47,25 @@ export function LoginForm({
 								</div>
 								<Input id="password" type="password" required />
 							</div>
+							<div className="grid gap-2">
+								<div className="flex items-center">
+									<Label htmlFor="password2">One more time</Label>
+
+								</div>
+								<Input id="password2" type="password" required />
+							</div>							
 							<Button type="submit" className="w-full">
-								Login
+								Sign up
 							</Button>
 						</div>
 						<div className="mt-4 text-center text-sm">
-							Don&apos;t have an account?{" "}
+							Have an account?{" "}
 							<a
 								href="#"
 								className="underline underline-offset-4"
-								onClick={() => onShowSignupForm()}
+								onClick={() => onShowLoginForm()}
 							>
-								Sign up
+								Login
 							</a>
 						</div>
 					</form>
