@@ -1,5 +1,14 @@
 import { useQuery } from "@apollo/client";
 import { gql } from "../src/__generated__/gql";
+import {
+	Dialog,
+	DialogTrigger,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogDescription,
+} from "@/components/ui/dialog";
+import { LoginForm } from "@/components/LoginForm/LoginForm";
 
 const GET_USERS = gql(/* GraphQL */ `
 	query Users {
@@ -22,9 +31,17 @@ function App() {
 
 	return (
 		<>
-			{data && data.users.map((user) => (
-				<div>{`${user.firstName} ${user.lastName} `}</div>
-			))}
+			<Dialog>
+				<DialogTrigger>Open</DialogTrigger>
+				<DialogContent>
+					<LoginForm />
+				</DialogContent>
+			</Dialog>
+
+			{data &&
+				data.users.map((user) => (
+					<div>{`${user.firstName} ${user.lastName} `}</div>
+				))}
 		</>
 	);
 }
