@@ -35,7 +35,7 @@ export const typeDefs = gql`
    }   
    
    type Query {
-      users: [User]
+      users: [User!]!
       user(id: ID!): User
       contacts: [Contact]
       contact(id: ID!): Contact

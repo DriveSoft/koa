@@ -4,13 +4,13 @@ import { addContact, getUser, getUserContact, getUsers, login, registerUser } fr
 export const resolvers = {
 	Query: {
 		users: async (parent: any, args: any, context: any, info: any) => {
-			if (!context?.user?.id) {
-				throw new GraphQLError('Protected', {
-					extensions: {
-						code: 'UNAUTHENTICATED',
-					}
-				});
-			}
+			// if (!context?.user?.id) {
+			// 	throw new GraphQLError('Protected', {
+			// 		extensions: {
+			// 			code: 'UNAUTHENTICATED',
+			// 		}
+			// 	});
+			// }
 			return await getUsers();
 		},
 		user: async (parent: any, args: any, context: any, info: any) => {
