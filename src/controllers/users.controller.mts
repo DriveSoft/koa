@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.mjs";
 import { GraphQLError } from "graphql";
 import Contact from "../models/Contact.mjs";
+import { StringValue } from "ms";
 
 export async function registerUser(data: any) {
    const { email, password } = data;
@@ -26,8 +27,7 @@ export async function registerUser(data: any) {
 };
 
 export async function getUsers() {
-   const users = await User.query().select("id", "firstName", "lastName", "dob");
-   console.log(users)
+   const users = await User.query().select("id", "firstName", "lastName", "dob", "email");
    return users.map(user => ({...user, dob: new Date(user.dob).toISOString().slice(0, 10)}));
 }
 
@@ -72,19 +72,8 @@ export async function login(email: string, password: string) {
       });
    }
 
-   const JWT_SECRET = process.env.JWT_SECRET as string;
-
-   const accessToken = jwt.sign(
-      { userId: user.id },
-      JWT_SECRET,
-      { expiresIn: '1d' }
-   );
-
-   const refreshToken = jwt.sign(
-      { userId: user.id },
-      JWT_SECRET,
-      { expiresIn: '30d' }
-   );
+   const accessToken = createToken(user.id, '1d');
+   const refreshToken = createToken(user.id, '30d');
 
    return {
       accessToken,
@@ -109,3 +98,13 @@ export const getUserByToken = async (token: string) => {
 }
 
 //getUserByToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjksImlhdCI6MTczOTM0ODk1NSwiZXhwIjoxNzM5NDM1MzU1fQ.B6MN3A8n2SL-jK8ausuArccytPLl1MOj5qlQSwAv_JA")
+
+export const createToken = (userId: number, expiresIn: StringValue | number) => {
+   const JWT_SECRET = process.env.JWT_SECRET as string;
+
+   return jwt.sign(
+      { userId: userId },
+      JWT_SECRET,
+      { expiresIn: expiresIn }
+   );
+}

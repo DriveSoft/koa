@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,14 +12,34 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 interface LoginFormProps extends React.ComponentPropsWithoutRef<"div"> {
+	onSubmitLogin: ({
+		email,
+		password,
+	}: {
+		email: string | null;
+		password: string | null;
+	}) => void;
 	onShowSignupForm: () => void;
 }
 
 export function LoginForm({
 	className,
+	onSubmitLogin,
 	onShowSignupForm,
 	...props
 }: LoginFormProps) {
+	const loginInputRef = useRef(null);
+	const passwordInputRef = useRef(null);
+
+	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		const formData = new FormData(event.currentTarget);
+		const email = formData.get("email");
+		const password = formData.get("password");
+		console.log("onSubmitLogin", onSubmitLogin)
+		onSubmitLogin({ email: email as string, password: password as string });
+	};
+
 	return (
 		<div className={cn("flex flex-col gap-6", className)} {...props}>
 			<Card>
@@ -29,12 +50,14 @@ export function LoginForm({
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<form>
+					<form onSubmit={handleSubmit}>
 						<div className="flex flex-col gap-6">
 							<div className="grid gap-2">
 								<Label htmlFor="email">Email</Label>
 								<Input
+									ref={loginInputRef}
 									id="email"
+									name="email"
 									type="email"
 									placeholder="m@example.com"
 									required
@@ -43,9 +66,14 @@ export function LoginForm({
 							<div className="grid gap-2">
 								<div className="flex items-center">
 									<Label htmlFor="password">Password</Label>
-
 								</div>
-								<Input id="password" type="password" required />
+								<Input
+									ref={passwordInputRef}
+									id="password"
+									name="password"
+									type="password"
+									required
+								/>
 							</div>
 							<Button type="submit" className="w-full">
 								Login

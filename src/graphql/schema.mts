@@ -35,6 +35,7 @@ export const typeDefs = gql`
    }   
    
    type Query {
+      me: AuthPayload
       users: [User!]!
       user(id: ID!): User
       contacts: [Contact]
@@ -45,5 +46,6 @@ export const typeDefs = gql`
       createUser(input: CreateUserInput!): User!
       createContact(input: CreateContactInput!): Contact!
       login(email: String!, password: String!): AuthPayload!
+      logout: Boolean
    } 
 `;

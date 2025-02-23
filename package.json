@@ -11,6 +11,7 @@
   "author": "DriveSoft",
   "license": "ISC",
   "dependencies": {
+    "@apollo/server": "^4.11.3",
     "@as-integrations/koa": "^1.1.1",
     "@koa/cors": "^5.0.0",
     "@types/bcrypt": "^5.0.2",

@@ -1,46 +1,33 @@
+import http from "http";
 import Koa from "koa";
-import router from "./router.mjs";
-import parser from "koa-bodyparser";
-import 'dotenv/config'; 
-
+import 'dotenv/config';
 import { Model } from "objection";
 import Knex from "knex";
-
-import { ApolloServerPluginLandingPageLocalDefault } from "apollo-server-core"
-import { ApolloServer } from "apollo-server";
+import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
+import { ApolloServer } from "@apollo/server";
 import { typeDefs } from "./graphql/schema.mjs";
 import { resolvers } from "./graphql/resolvers.mjs";
 import { getUser, getUserByToken } from "./controllers/users.controller.mjs";
 import cors from "@koa/cors";
+import bodyParser from "koa-bodyparser";
+
+import { KoaContextFunctionArgument, koaMiddleware } from '@as-integrations/koa';
 
 // Initialize knex.
 const knex = Knex({
-   client: 'postgresql',
-   connection: process.env.PG_CONNECTION_STRING,
-   searchPath: ['knex', 'public'],
- });
+  client: 'postgresql',
+  connection: process.env.PG_CONNECTION_STRING,
+  searchPath: ['knex', 'public'],
+});
 
- Model.knex(knex);
+Model.knex(knex);
 
 // knex.raw('SELECT 1')
 // .then(() => console.log('Connected to PostgreSQL'))
 // .catch(err => console.error('Connection failed:', err)); 
 
 const app = new Koa();
-
-app.use(cors({
-  credentials: true,
-  origin: 'http://localhost:4000' // Your frontend origin
-}));
-
-app.use(parser()).use(router.routes()).use(router.allowedMethods());
-
-app.on('error', err => {
-   console.error('server error', err)
- });
-
-app.listen(3500);
-
+const httpServer = http.createServer(app.callback());
 
 // The ApolloServer constructor requires two parameters: your schema
 // definition and your set of resolvers.
@@ -49,28 +36,30 @@ const server = new ApolloServer({
   resolvers,
   csrfPrevention: true,
   cache: 'bounded',
-  /**
-   * What's up with this embed: true option?
-   * These are our recommended settings for using AS;
-   * they aren't the defaults in AS3 for backwards-compatibility reasons but
-   * will be the defaults in AS4. For production environments, use
-   * ApolloServerPluginLandingPageProductionDefault instead.
-  **/
-  plugins: [
-    ApolloServerPluginLandingPageLocalDefault({ embed: true }),
-  ],
-
-  context: async ({ req, res }) => {
-    // Get token from Authorization header
-    const token = req.headers.authorization?.replace('Bearer ', '');
-    if(token === undefined) return { user: null, req, res };
-    const user = await getUserByToken(token);   
-    return { user, req, res };
-  }  
+  plugins: [ApolloServerPluginDrainHttpServer({ httpServer })], 
 });
 
+await server.start();
 
-// The `listen` method launches a web server.
-server.listen().then(({ url }) => {
-  console.log(`🚀  Server ready at ${url}`);
+app.use(cors({
+  credentials: true,
+  origin: 'http://localhost:5173'
+}));
+app.use(bodyParser());
+app.use(
+  koaMiddleware(server, {
+    context: async ({ ctx }) => {
+
+      // Get token from Authorization header
+      const token = ctx.headers.authorization?.replace('Bearer ', '');
+      if (token === undefined) return { koaCtx: ctx, user: null };
+      const user = await getUserByToken(token);
+      return { koaCtx: ctx, user };
+    },
+  })
+);
+
+await new Promise((resolve) => {
+  httpServer.listen({ port: 4000 }, () => resolve)
+  console.log(`🚀 Server ready at http://localhost:4000`);
 });

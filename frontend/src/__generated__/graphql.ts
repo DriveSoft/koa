@@ -47,6 +47,7 @@ export type Mutation = {
   createContact: Contact;
   createUser: User;
   login: AuthPayload;
+  logout?: Maybe<Scalars['Boolean']['output']>;
 };
 
 
@@ -69,6 +70,7 @@ export type Query = {
   __typename?: 'Query';
   contact?: Maybe<Contact>;
   contacts?: Maybe<Array<Maybe<Contact>>>;
+  me?: Maybe<AuthPayload>;
   user?: Maybe<User>;
   users: Array<User>;
 };
@@ -93,10 +95,31 @@ export type User = {
   lastName?: Maybe<Scalars['String']['output']>;
 };
 
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'AuthPayload', accessToken: string, user: { __typename?: 'User', id?: number | null, firstName?: string | null } } | null };
+
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutMutation = { __typename?: 'Mutation', logout?: boolean | null };
+
+export type MutationMutationVariables = Exact<{
+  password: Scalars['String']['input'];
+  email: Scalars['String']['input'];
+}>;
+
+
+export type MutationMutation = { __typename?: 'Mutation', login: { __typename?: 'AuthPayload', accessToken: string } };
+
 export type UsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type UsersQuery = { __typename?: 'Query', users: Array<{ __typename?: 'User', id?: number | null, firstName?: string | null, lastName?: string | null, email?: string | null, dob?: string | null }> };
 
 
+export const MeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"me"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accessToken"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}}]}}]}}]}}]} as unknown as DocumentNode<MeQuery, MeQueryVariables>;
+export const LogoutDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Logout"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"logout"}}]}}]} as unknown as DocumentNode<LogoutMutation, LogoutMutationVariables>;
+export const MutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Mutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}},{"kind":"Argument","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accessToken"}}]}}]}}]} as unknown as DocumentNode<MutationMutation, MutationMutationVariables>;
 export const UsersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Users"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"users"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"dob"}}]}}]}}]} as unknown as DocumentNode<UsersQuery, UsersQueryVariables>;
